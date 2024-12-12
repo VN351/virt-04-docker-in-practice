@@ -35,10 +35,57 @@ See 'snap info docker' for additional versions.
 Обязательно используйте конструкцию ```COPY . .``` в Dockerfile. Не забудьте исключить ненужные в имадже файлы с помощью dockerignore. Протестируйте корректность сборки.  
 4. (Необязательная часть, *) Изучите инструкцию в проекте и запустите web-приложение без использования docker в venv. (Mysql БД можно запустить в docker run).
 5. (Необязательная часть, *) По образцу предоставленного python кода внесите в него исправление для управления названием используемой таблицы через ENV переменную.
+
+## Ответ к заданию 1
+1. ![alt text](https://github.com/VN351/virt-04-docker-in-practice/raw/main/images/task-1-1.png)
+2. 
+   - Dockerfile.python
+      ```
+      # Используем базовый образ Python версии 3.9-slim
+      FROM python:3.9-slim
+
+      # Устанавливаем рабочую директорию в контейнере
+      WORKDIR /app
+
+      # Копируем все файлы из текущей директории в контейнер
+      COPY . .
+
+      # Устанавливаем зависимости
+      RUN pip install --no-cache-dir -r requirements.txt || true
+
+      # Указываем команду по умолчанию для запуска приложения
+      CMD ["python", "main.py"]
+      ``` 
+   - .dockerignore
+   
+      ```
+      .git
+      venv
+      *.pyc
+      *.pyo
+      __pycache__
+      *.log
+      *.pdf
+      *.md
+
+      ```
+   ![alt text](https://github.com/VN351/virt-04-docker-in-practice/raw/main/images/task-1-2.png)      
+3. 
+   ![alt text](https://github.com/VN351/virt-04-docker-in-practice/raw/main/images/task-1-3.png)
+4. Был установлен пакет для взоимодействия c .env python-dotenv
+   Изменения внесенные в main.py
+   ```
+   from dotenv import load_dotenv
+
+   load_dotenv()
+   ```
+   ![alt text](https://github.com/VN351/virt-04-docker-in-practice/raw/main/images/task-1-4.png)
+
+
 ---
 ### ВНИМАНИЕ!
 !!! В процессе последующего выполнения ДЗ НЕ изменяйте содержимое файлов в fork-репозитории! Ваша задача ДОБАВИТЬ 5 файлов: ```Dockerfile.python```, ```compose.yaml```, ```.gitignore```, ```.dockerignore```,```bash-скрипт```. Если вам понадобилось внести иные изменения в проект - вы что-то делаете неверно!
----r
+---
 
 ## Задача 2 (*)
 1. Создайте в yandex cloud container registry с именем "test" с помощью "yc tool" . [Инструкция](https://cloud.yandex.ru/ru/docs/container-registry/quickstart/?from=int-console-help)
