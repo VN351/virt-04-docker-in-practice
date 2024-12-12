@@ -72,8 +72,8 @@ See 'snap info docker' for additional versions.
    ![alt text](https://github.com/VN351/virt-04-docker-in-practice/raw/main/images/task-1-2.png)      
 3. 
    ![alt text](https://github.com/VN351/virt-04-docker-in-practice/raw/main/images/task-1-3.png)
-4. Был установлен пакет для взоимодействия c .env python-dotenv
-   Изменения внесенные в main.py
+4. Был установлен пакет для взоимодействия c .env - python-dotenv <br>
+   Изменения внесенные в начало файла main.py
    ```
    from dotenv import load_dotenv
 
