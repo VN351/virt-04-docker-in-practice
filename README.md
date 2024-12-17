@@ -59,14 +59,25 @@ See 'snap info docker' for additional versions.
    - .dockerignore
    
       ```
+      # Исключаем git информацию
       .git
+      .gitignore
+      .dockerignore
+
+      # Исключаем виртуальное окружение
       venv
+
+      # Исключаем прочие ненужные файлы
+      _pycache__
       *.pyc
       *.pyo
-      __pycache__
-      *.log
-      *.pdf
-      *.md
+      *.pyd
+      *.yaml
+      not_tested_main.py
+      .md
+      LICENSE
+      .pdf
+
 
       ```
    ![alt text](https://github.com/VN351/virt-04-docker-in-practice/raw/main/images/task-1-2.png)      
@@ -94,6 +105,10 @@ See 'snap info docker' for additional versions.
 4. Просканируйте образ на уязвимости.
 5. В качестве ответа приложите отчет сканирования.
 
+## Ответ к заданию 2
+   ![alt text](https://github.com/VN351/virt-04-docker-in-practice/raw/main/images/task-2-2.png)
+   ![alt text](https://github.com/VN351/virt-04-docker-in-practice/raw/main/images/task-2-3.png)
+
 ## Задача 3
 1. Изучите файл "proxy.yaml"
 2. Создайте в репозитории с проектом файл ```compose.yaml```. С помощью директивы "include" подключите к нему файл "proxy.yaml".
@@ -109,6 +124,10 @@ See 'snap info docker' for additional versions.
 5. Подключитесь к БД mysql с помощью команды ```docker exec -ti <имя_контейнера> mysql -uroot -p<пароль root-пользователя>```(обратите внимание что между ключем -u и логином root нет пробела. это важно!!! тоже самое с паролем) . Введите последовательно команды (не забываем в конце символ ; ): ```show databases; use <имя вашей базы данных(по-умолчанию example)>; show tables; SELECT * from requests LIMIT 10;```.
 
 6. Остановите проект. В качестве ответа приложите скриншот sql-запроса.
+
+## Ответ к заданию 3
+   [Ссылка на GitHub с приложением](https://)
+   ![alt text](https://github.com/VN351/virt-04-docker-in-practice/raw/main/images/task-3-1.png)
 
 ## Задача 4
 1. Запустите в Yandex Cloud ВМ (вам хватит 2 Гб Ram).
