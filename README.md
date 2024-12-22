@@ -56,13 +56,13 @@ See 'snap info docker' for additional versions.
       # Указываем команду по умолчанию для запуска приложения
       CMD ["python", "main.py"]
       ``` 
+   
    - .dockerignore
    
       ```
       # Исключаем git информацию
       .git
       .gitignore
-      .dockerignore
 
       # Исключаем виртуальное окружение
       venv
@@ -77,8 +77,6 @@ See 'snap info docker' for additional versions.
       .md
       LICENSE
       .pdf
-
-
       ```
    ![alt text](https://github.com/VN351/virt-04-docker-in-practice/raw/main/images/task-1-2.png)      
 3. 
@@ -121,12 +119,11 @@ See 'snap info docker' for additional versions.
 
 2. Запустите проект локально с помощью docker compose , добейтесь его стабильной работы: команда ```curl -L http://127.0.0.1:8090``` должна возвращать в качестве ответа время и локальный IP-адрес. Если сервисы не стартуют воспользуйтесь командами: ```docker ps -a ``` и ```docker logs <container_name>``` . Если вместо IP-адреса вы получаете ```NULL``` --убедитесь, что вы шлете запрос на порт ```8090```, а не 5000.
 
-5. Подключитесь к БД mysql с помощью команды ```docker exec -ti <имя_контейнера> mysql -uroot -p<пароль root-пользователя>```(обратите внимание что между ключем -u и логином root нет пробела. это важно!!! тоже самое с паролем) . Введите последовательно команды (не забываем в конце символ ; ): ```show databases; use <имя вашей базы данных(по-умолчанию example)>; show tables; SELECT * from requests LIMIT 10;```.
+5. Подключитесь к БД mysql с помощью команды ```docker exec -ti <имя_контейнера> mysql -uroot -p<пароль root-пользователя>```(обратите внимание что между ключем -u и логином root нет пробела. это важно!!! тоже самое с паролем) . Введите последовательно команды (не забываем в конце символ ; ): ```show databases; use <имя вашей базы данных(по-умолчанию example)>;  SELECT * from requests LIMIT 10;```.
 
 6. Остановите проект. В качестве ответа приложите скриншот sql-запроса.
 
 ## Ответ к заданию 3
-   [Ссылка на GitHub с приложением](https://)
    ![alt text](https://github.com/VN351/virt-04-docker-in-practice/raw/main/images/task-3-1.png)
 
 ## Задача 4
@@ -136,6 +133,53 @@ See 'snap info docker' for additional versions.
 4. Зайдите на сайт проверки http подключений, например(или аналогичный): ```https://check-host.net/check-http``` и запустите проверку вашего сервиса ```http://<внешний_IP-адрес_вашей_ВМ>:8090```. Таким образом трафик будет направлен в ingress-proxy. ПРИМЕЧАНИЕ:  приложение(old_main.py) весьма вероятно упадет под нагрузкой, но успеет обработать часть запросов - этого достаточно. Обновленная версия (main.py) не прошла достаточного тестирования временем, но должна справиться с нагрузкой.
 5. (Необязательная часть) Дополнительно настройте remote ssh context к вашему серверу. Отобразите список контекстов и результат удаленного выполнения ```docker ps -a```
 6. В качестве ответа повторите  sql-запрос и приложите скриншот с данного сервера, bash-скрипт и ссылку на fork-репозиторий.
+
+## Ответ к заданию 4
+   - bash script
+      ```
+      REPO_URL="https://github.com/VN351/shvirtd-example-python.git" # URL репозитория
+      TARGET_DIR="/opt/project"                                      # Каталог для загрузки репозитория
+      BRANCH="main"                                                  # Ветка репозитория
+
+
+      # Проверка прав суперпользователя
+      if [ "$EUID" -ne 0 ]; then
+         echo "Пожалуйста, запустите скрипт с правами суперпользователя (sudo)."
+         exit 1
+      fi
+
+      # Клонирование репозитория
+      echo "Клонируем репозиторий $REPO_URL в $TARGET_DIR..."
+      rm -rf "$TARGET_DIR" # Удаляем старую версию, если она существует
+      git clone --branch "$BRANCH" "$REPO_URL" "$TARGET_DIR" || {
+         echo "Ошибка при клонировании репозитория."
+         exit 1
+      }
+
+      # Переход в каталог проекта
+      cd "$TARGET_DIR" || {
+         echo "Не удалось перейти в каталог $TARGET_DIR."
+         exit 1
+      }
+
+      # Запуск проекта
+      echo "Запускаем проект..."
+
+      # Запуск Docker Compose с указанным файлом
+         docker compose up --build || {
+            echo "Ошибка при запуске Docker Compose."
+            exit 1
+      }
+
+      else
+         echo "Не удалось определить способ запуска проекта. Проверьте документацию вашего репозитория."
+         exit 1
+      fi
+      ```
+   [Ссылка на GitHub с приложением](https://github.com/VN351/shvirtd-example-python.git)
+   ![alt text](https://github.com/VN351/virt-04-docker-in-practice/raw/main/images/task-4-1.png)
+   ![alt text](https://github.com/VN351/virt-04-docker-in-practice/raw/main/images/task-4-2.png)
+   ![alt text](https://github.com/VN351/virt-04-docker-in-practice/raw/main/images/task-4-3.png)
 
 ## Задача 5 (*)
 1. Напишите и задеплойте на вашу облачную ВМ bash скрипт, который произведет резервное копирование БД mysql в директорию "/opt/backup" с помощью запуска в сети "backend" контейнера из образа ```schnitzler/mysqldump``` при помощи ```docker run ...``` команды. Подсказка: "документация образа."
@@ -147,9 +191,17 @@ See 'snap info docker' for additional versions.
 Скачайте docker образ ```hashicorp/terraform:latest``` и скопируйте бинарный файл ```/bin/terraform``` на свою локальную машину, используя dive и docker save.
 Предоставьте скриншоты  действий .
 
+## Ответ к заданию 6
+![alt text](https://github.com/VN351/virt-04-docker-in-practice/raw/main/images/task-6-1.png)
+![alt text](https://github.com/VN351/virt-04-docker-in-practice/raw/main/images/task-6-2.png)
+![alt text](https://github.com/VN351/virt-04-docker-in-practice/raw/main/images/task-6-3.png)
+
 ## Задача 6.1
 Добейтесь аналогичного результата, используя docker cp.  
 Предоставьте скриншоты  действий .
+
+## Ответ к заданию 6.1
+![alt text](https://github.com/VN351/virt-04-docker-in-practice/raw/main/images/task-6-4.png)
 
 ## Задача 6.2 (**)
 Предложите способ извлечь файл из контейнера, используя только команду docker build и любой Dockerfile.  
